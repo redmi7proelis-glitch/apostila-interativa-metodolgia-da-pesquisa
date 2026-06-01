@@ -1,0 +1,6 @@
+{
+  "name": "Apostila Interativa - Metodologia da Pesquisa",
+  "description": "Uma apostila interativa de Metodologia de Pesquisa construída em modelo de 8 sprints de projeto, contendo materiais teóricos, fichas de prática científica, simulador de congresso de saúde, e assistente virtual co-orientador integrado com Inteligência Artificial.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

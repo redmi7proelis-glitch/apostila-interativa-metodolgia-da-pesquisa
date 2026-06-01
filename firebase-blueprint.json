@@ -1,0 +1,62 @@
+{
+  "entities": {
+    "student": {
+      "title": "Student Progress",
+      "description": "Represents a student's active progress, quiz answers, and draft chapters in the interactive workbook.",
+      "type": "object",
+      "properties": {
+        "uid": { "type": "string" },
+        "name": { "type": "string" },
+        "email": { "type": "string" },
+        "progress": { "type": "integer" },
+        "lastActive": { "type": "string", "format": "date-time" },
+        "drafts": { "type": "object" },
+        "quizzesChecked": { "type": "object" },
+        "quizzesAnswers": { "type": "object" }
+      },
+      "required": ["uid", "name", "email", "progress"]
+    },
+    "certificate": {
+      "title": "Certificate Delivery",
+      "description": "Represents certificates requested or delivered to students upon completion of all sprints.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "studentUid": { "type": "string" },
+        "studentName": { "type": "string" },
+        "studentEmail": { "type": "string" },
+        "issueDate": { "type": "string", "format": "date-time" },
+        "status": { "type": "string", "enum": ["pending", "delivered"] },
+        "certificateCode": { "type": "string" }
+      },
+      "required": ["id", "studentUid", "studentName", "studentEmail", "status", "certificateCode"]
+    },
+    "adminConfig": {
+      "title": "Admin Google Sheets Link Configuration",
+      "description": "Stores the spreadsheet link for the professor to sync student metrics onto Google Sheets.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "professorEmail": { "type": "string" },
+        "spreadsheetId": { "type": "string" },
+        "spreadsheetUrl": { "type": "string" },
+        "lastSync": { "type": "string", "format": "date-time" }
+      },
+      "required": ["id", "professorEmail", "spreadsheetId"]
+    }
+  },
+  "firestore": {
+    "/students/{studentId}": {
+      "schema": "student",
+      "description": "Student progress documents keyed by user UID."
+    },
+    "/certificates/{certificateId}": {
+      "schema": "certificate",
+      "description": "Certificate records issued to completing students."
+    },
+    "/adminConfig/{configId}": {
+      "schema": "adminConfig",
+      "description": "Master administration configurations (Google Sheet spreadsheetId, etc.)"
+    }
+  }
+}

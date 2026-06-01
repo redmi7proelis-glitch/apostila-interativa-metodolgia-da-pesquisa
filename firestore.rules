@@ -1,0 +1,49 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    // Global Safety Catch-All Gate
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // Standard hardcoded verification helpers
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isOwner(userId) {
+      return isSignedIn() && request.auth.uid == userId;
+    }
+
+    // Professor email checked from publication info
+    function isAdmin() {
+      return isSignedIn() && 
+             request.auth.token.email == "redmi7proelis@gmail.com" && 
+             request.auth.token.email_verified == true;
+    }
+
+    // Validate if dynamic IDs are safe and standard
+    function isValidId(id) {
+      return id is string && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$');
+    }
+
+    // Students Collection
+    match /students/{studentId} {
+      allow read: if isOwner(studentId) || isAdmin();
+      allow create, update: if (isOwner(studentId) && isValidId(studentId)) || isAdmin();
+    }
+
+    // Certificates Collection
+    match /certificates/{certificateId} {
+      allow read: if (isSignedIn() && (resource == null || resource.data.studentUid == request.auth.uid)) || isAdmin();
+      allow create: if (isSignedIn() && (request.resource.data.studentUid == request.auth.uid) && isValidId(certificateId)) || isAdmin();
+      allow update, delete: if isAdmin();
+    }
+
+    // Admin configuration (Google Drive Sheets metadata)
+    match /adminConfig/{configId} {
+      allow read, write: if isAdmin();
+    }
+  }
+}
